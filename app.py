@@ -1,13 +1,28 @@
-from flask import Flask, request, jsonify, render_template_string
+import os
+
+from dotenv import load_dotenv
+from flask import Flask, request, jsonify, render_template_string, send_from_directory
 from flask_cors import CORS
+from auth import auth_bp, bcrypt, db
 import database
 import inference 
 import insights 
 
+load_dotenv()
+
 app = Flask(__name__)
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-only-change-this-secret-key")
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///trait_tracker.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 CORS(app)
 
 database.init_db()
+db.init_app(app)
+bcrypt.init_app(app)
+app.register_blueprint(auth_bp)
+
+with app.app_context():
+    db.create_all()
 
 @app.route('/api/submit-survey', methods=['POST'])
 def submit_survey():
@@ -77,6 +92,20 @@ def get_admin_analytics():
         "chart_data_averages": stats['averages'],  
         "all_user_records": all_users             
     }), 200
+
+FRONTEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend")
+
+@app.route("/", methods=["GET"])
+def home():
+    return send_from_directory(FRONTEND_DIR, "index.html")
+
+@app.route("/assets/<path:filename>", methods=["GET"])
+def frontend_assets(filename):
+    return send_from_directory(os.path.join(FRONTEND_DIR, "assets"), filename)
+
+@app.route("/<page_name>.html", methods=["GET"])
+def frontend_pages(page_name):
+    return send_from_directory(FRONTEND_DIR, f"{page_name}.html")
 
 # ============================================================
 # UPDATED: PREMIUM, MINIMALIST APPLE-STYLE VISUALIZATION

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TraitTracker | Privacy-focused personality analytics</title>
+  <meta name="description" content="TraitTracker is a private personality assessment that helps people understand their Big Five trait patterns with clear, useful insights.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+  <a class="skip-link btn btn-primary" href="#main">Skip to content</a>
+  <div id="loadingScreen" class="loading-screen"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading</span></div></div>
+  <nav class="navbar navbar-expand-lg sticky-top" aria-label="Primary navigation">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"><span class="brand-mark">T</span>TraitTracker</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+      <div id="mainNav" class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+          <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#how-it-works">How it works</a></li>
+          <li class="nav-item"><a class="nav-link" href="#privacy">Privacy</a></li>
+          <li class="nav-item"><a class="nav-link" href="assessment.html">Start test</a></li>
+          <li class="nav-item ms-lg-2"><a class="btn btn-outline-primary" href="login.html">Login</a></li>
+          <li class="nav-item"><a class="btn btn-primary" href="register.html">Register</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+            <p class="eyebrow mb-3">Private personality assessment</p>
+            <h1>TraitTracker</h1>
+            <p class="lead mt-4">Understand your personality patterns through a calm, research-inspired assessment. Get clear Big Five insights you can actually use for self-awareness, growth, and career reflection.</p>
+            <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
+              <a class="btn btn-primary btn-lg" href="assessment.html"><i class="bi bi-clipboard2-pulse me-2"></i>Start Test</a>
+              <a class="btn btn-light btn-lg" href="#how-it-works"><i class="bi bi-arrow-down-circle me-2"></i>Learn more</a>
+            </div>
+            <div class="hero-trust-row" aria-label="TraitTracker privacy highlights">
+              <span><i class="bi bi-shield-check"></i> Consent first</span>
+              <span><i class="bi bi-lock"></i> Privacy focused</span>
+              <span><i class="bi bi-graph-up"></i> Visual results</span>
+            </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="section-band section-muted">
+      <div class="container">
+        <div class="row mb-4 align-items-end">
+          <div class="col-lg-7">
+            <p class="eyebrow">How it works</p>
+            <h2>A simple assessment with clear results</h2>
+          </div>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-4"><article class="tt-card"><i class="bi bi-ui-checks-grid trait-icon mb-3"></i><h3 class="h5">Answer thoughtfully</h3><p class="text-muted mb-0">Complete a guided questionnaire using simple agreement choices.</p></article></div>
+          <div class="col-md-4"><article class="tt-card"><i class="bi bi-bar-chart-line trait-icon mb-3"></i><h3 class="h5">See your profile</h3><p class="text-muted mb-0">Review your Big Five trait pattern through clean charts and summaries.</p></article></div>
+          <div class="col-md-4"><article class="tt-card"><i class="bi bi-compass trait-icon mb-3"></i><h3 class="h5">Reflect with context</h3><p class="text-muted mb-0">Use strengths, growth areas, and career suggestions as a starting point.</p></article></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="privacy" class="section-band">
+      <div class="container">
+        <div class="row g-4 align-items-center">
+          <div class="col-lg-5">
+            <p class="eyebrow">Privacy</p>
+            <h2>Your answers should feel safe</h2>
+            <p class="text-muted">TraitTracker asks for consent before collecting responses and keeps privacy notices visible throughout the assessment journey.</p>
+          </div>
+          <div class="col-lg-7">
+            <div class="row g-3">
+              <div class="col-sm-6"><div class="tt-card"><strong>Consent required</strong><p class="text-muted mb-0 mt-2">The test cannot continue until you agree to the privacy notice.</p></div></div>
+              <div class="col-sm-6"><div class="tt-card"><strong>Clear purpose</strong><p class="text-muted mb-0 mt-2">Your responses are used to calculate and explain personality patterns.</p></div></div>
+              <div class="col-sm-6"><div class="tt-card"><strong>Accessible design</strong><p class="text-muted mb-0 mt-2">The interface is responsive, keyboard-friendly, and easy to read.</p></div></div>
+              <div class="col-sm-6"><div class="tt-card"><strong>Useful reports</strong><p class="text-muted mb-0 mt-2">Download or revisit results after completing the assessment.</p></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container d-flex flex-column flex-md-row justify-content-between gap-3">
+      <div><strong>TraitTracker</strong><p class="mb-0 small">Private personality insights for clearer self-understanding.</p></div>
+      <div class="small"><a href="consent.html">Privacy policy</a><span class="mx-2">|</span><a href="mailto:privacy@traittracker.local">privacy@traittracker.local</a></div>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

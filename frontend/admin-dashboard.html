@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Dashboard | TraitTracker</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg sticky-top" aria-label="Admin navigation"><div class="container"><a class="navbar-brand" href="index.html"><span class="brand-mark">T</span>TraitTracker</a><div class="ms-auto d-flex gap-2"><a class="btn btn-outline-primary" href="company-dashboard.html">Company</a><a class="btn btn-primary" href="login.html">Switch role</a></div></div></nav>
+  <main class="app-shell" id="main">
+    <div class="container">
+      <section class="glass-card dashboard-hero p-4 mb-4"><p class="eyebrow">Admin control center</p><h1>System statistics and governance</h1><p class="text-muted mb-0">Monitor assessments, users, reports, roles, and audit activity for the TraitTracker platform.</p><div class="stat-strip"><div class="stat-pill"><span class="small">Health</span><strong>Stable</strong></div><div class="stat-pill"><span class="small">Consent audit</span><strong>98%</strong></div><div class="stat-pill"><span class="small">Alerts</span><strong>3 open</strong></div></div></section>
+      <div class="dashboard-grid">
+        <div class="span-3 tt-card"><span class="trait-icon mb-3"><i class="bi bi-people"></i></span><p class="text-muted small mb-1">Users</p><h2 class="h3">1,248</h2></div>
+        <div class="span-3 tt-card"><span class="trait-icon mb-3"><i class="bi bi-clipboard-check"></i></span><p class="text-muted small mb-1">Assessments</p><h2 class="h3">3,906</h2></div>
+        <div class="span-3 tt-card"><span class="trait-icon mb-3"><i class="bi bi-building"></i></span><p class="text-muted small mb-1">Companies</p><h2 class="h3">42</h2></div>
+        <div class="span-3 tt-card"><span class="trait-icon mb-3"><i class="bi bi-file-earmark-bar-graph"></i></span><p class="text-muted small mb-1">Reports</p><h2 class="h3">2,810</h2></div>
+        <section class="span-6 tt-card"><h2 class="h4">Assessment analytics</h2><canvas id="adminTraitChart" aria-label="Platform average trait chart"></canvas></section>
+        <section class="span-6 tt-card"><h2 class="h4">Historical trends</h2><canvas id="adminTrendChart" aria-label="Admin trend chart"></canvas></section>
+        <section class="span-7 tt-card"><h2 class="h4">User management</h2><div class="table-responsive"><table class="table align-middle mb-0"><caption class="visually-hidden">User management table</caption><thead><tr><th>User</th><th>Role</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>candidate@traittracker.edu</td><td>Candidate</td><td><span class="badge text-bg-success">Active</span></td><td><button class="btn btn-sm btn-outline-primary" type="button">Review</button></td></tr><tr><td>hr@example.com</td><td>Company</td><td><span class="badge text-bg-success">Active</span></td><td><button class="btn btn-sm btn-outline-primary" type="button">Review</button></td></tr><tr><td>admin@traittracker.edu</td><td>Admin</td><td><span class="badge text-bg-warning">Pending MFA</span></td><td><button class="btn btn-sm btn-outline-primary" type="button">Review</button></td></tr></tbody></table></div></section>
+        <section class="span-5 tt-card"><h2 class="h4">Role management</h2><form id="roleForm" novalidate><label for="roleEmail" class="form-label">User email</label><input id="roleEmail" class="form-control mb-3" type="email" required><label for="roleSelect" class="form-label">Assign role</label><select id="roleSelect" class="form-select mb-3" required><option>Candidate</option><option>Company</option><option>Admin</option></select><button class="btn btn-primary" type="submit">Save role</button></form><div class="privacy-note small mt-3">Admin role changes should be logged and reviewed.</div></section>
+        <section class="span-6 tt-card"><h2 class="h4">Reports overview</h2><ul class="list-group list-group-flush"><li class="list-group-item d-flex justify-content-between">Weekly assessment export <span class="badge text-bg-primary">Ready</span></li><li class="list-group-item d-flex justify-content-between">Consent audit summary <span class="badge text-bg-success">Complete</span></li><li class="list-group-item d-flex justify-content-between">Company access review <span class="badge text-bg-warning">Review</span></li></ul></section>
+        <section class="span-6 tt-card"><h2 class="h4">Activity logs</h2><div class="table-responsive"><table class="table table-sm mb-0"><caption class="visually-hidden">Activity logs</caption><tbody><tr><td>09:42</td><td>Assessment completed</td><td>Candidate</td></tr><tr><td>09:30</td><td>Report downloaded</td><td>Candidate</td></tr><tr><td>09:12</td><td>Role policy updated</td><td>Admin</td></tr></tbody></table></div></section>
+      </div>
+    </div>
+  </main>
+  <div class="modal fade" id="sessionTimeoutModal" tabindex="-1" aria-labelledby="sessionTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 id="sessionTitle" class="modal-title h5">Session timeout warning</h2></div><div class="modal-body"><p>Your admin workspace has been idle. Extend your session to continue securely.</p></div><div class="modal-footer"><button class="btn btn-primary" data-extend-session type="button">Extend session</button></div></div></div></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="assets/js/app.js"></script><script src="assets/js/admin.js"></script>
+</body>
+</html>
