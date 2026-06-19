@@ -8,7 +8,8 @@
   <link href="assets/css/styles.css" rel="stylesheet">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg sticky-top" aria-label="Dashboard navigation"><div class="container"><a class="navbar-brand" href="index.html"><span class="brand-mark">T</span>TraitTracker</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button><div id="nav" class="collapse navbar-collapse"><ul class="navbar-nav ms-auto gap-lg-1"><li class="nav-item"><a class="nav-link active" href="candidate-dashboard.html">Candidate</a></li><li class="nav-item"><a class="nav-link" href="results.html">Results</a></li><li class="nav-item"><a class="nav-link" href="assessment.html">Assessment</a></li><li class="nav-item d-none" data-role-visible="Company"><a class="nav-link" href="company-dashboard.html">Company</a></li><li class="nav-item d-none" data-role-visible="Admin"><a class="nav-link" href="admin-dashboard.html">Admin</a></li></ul></div></div></nav>
+  <a class="skip-link btn btn-primary" href="#main">Skip to content</a>
+  <nav class="navbar navbar-expand-lg sticky-top" aria-label="Dashboard navigation"><div class="container"><a class="navbar-brand" href="index.html"><img class="brand-logo" src="assets/images/traittracker-logo-hd.png" alt="">TraitTracker</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button><div id="nav" class="collapse navbar-collapse"><ul class="navbar-nav ms-auto gap-lg-1"><li class="nav-item"><a class="nav-link active" href="candidate-dashboard.html">Candidate</a></li><li class="nav-item"><a class="nav-link" href="results.html">Results</a></li><li class="nav-item"><a class="nav-link" href="assessment.html">Assessment</a></li><li class="nav-item d-none" data-role-visible="Company"><a class="nav-link" href="company-dashboard.html">Company</a></li><li class="nav-item d-none" data-role-visible="Admin"><a class="nav-link" href="admin-dashboard.html">Admin</a></li></ul></div></div></nav>
   <main class="app-shell" id="main">
     <div class="container">
       <section class="glass-card dashboard-hero p-4 mb-4">
@@ -19,19 +20,19 @@
             <p id="dominantInsight" class="text-muted mb-0">Your dashboard adapts to your dominant trait.</p>
             <div class="stat-strip">
               <div class="stat-pill"><span class="small">Completion</span><strong>100%</strong></div>
-              <div class="stat-pill"><span class="small">Reports</span><strong>2 ready</strong></div>
+              <div class="stat-pill"><span class="small">Reports</span><strong id="reportCount">0 ready</strong></div>
               <div class="stat-pill"><span class="small">Theme</span><strong data-dominant-trait>Openness</strong></div>
             </div>
           </div>
-          <div class="col-lg-4 text-lg-end"><div class="score-ring" style="--score:82"><strong data-dominant-trait>Openness</strong></div></div>
+          <div class="col-lg-4 text-lg-end"><div id="dominantScoreRing" class="score-ring" style="--score:0"><strong data-dominant-trait>Openness</strong></div></div>
         </div>
       </section>
       <div class="dashboard-grid">
         <div id="traitSummaryCards" class="span-12 dashboard-grid"></div>
         <section class="span-7 tt-card"><div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h4 mb-0">Trait overview</h2><button class="btn btn-sm btn-outline-primary" data-report-action type="button"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</button></div><canvas id="dashboardRadar" aria-label="Radar chart of personality scores"></canvas></section>
-        <section class="span-5 tt-card"><h2 class="h4">Assessment history</h2><canvas id="historyTrend" aria-label="Historical assessment trend"></canvas><div class="table-responsive mt-3"><table class="table table-sm mb-0"><caption class="visually-hidden">Assessment history</caption><thead><tr><th>Date</th><th>Dominant</th><th>Status</th></tr></thead><tbody><tr><td>2026-06-18</td><td data-dominant-trait>Openness</td><td><span class="badge text-bg-success">Complete</span></td></tr><tr><td>2026-05-10</td><td>Agreeableness</td><td><span class="badge text-bg-secondary">Archived</span></td></tr></tbody></table></div></section>
+        <section class="span-5 tt-card"><h2 class="h4">Assessment history</h2><div class="chart-shell"><canvas id="historyTrend" role="img" aria-label="Historical assessment trend"></canvas></div><div class="table-responsive mt-3"><table class="table table-sm mb-0"><caption class="visually-hidden">Assessment history</caption><thead><tr><th scope="col">Date</th><th scope="col">Dominant</th><th scope="col">Status</th></tr></thead><tbody id="dashboardHistoryRows"></tbody></table></div></section>
         <section class="span-6 tt-card"><h2 class="h4">Score overview</h2><canvas id="dashboardBars" aria-label="Bar chart of trait scores"></canvas></section>
-        <section class="span-6 tt-card"><h2 class="h4">Profile settings</h2><p class="privacy-note small">Settings are sanitized on input and prepared for secure backend update.</p><label for="settingsName" class="form-label">Display name</label><input id="settingsName" class="form-control mb-3" data-profile-name value="Elena Rivera"><label for="settingsEmail" class="form-label">Email</label><input id="settingsEmail" class="form-control mb-3" type="email" value="candidate@traittracker.edu"><button id="saveProfile" class="btn btn-primary" type="button">Save settings</button></section>
+        <section id="profile-settings" class="span-6 tt-card"><h2 class="h4">Profile settings</h2><p class="privacy-note small">Update the name and email shown in your private workspace.</p><div id="profileAlert" class="alert d-none" role="status" aria-live="polite"></div><label for="settingsName" class="form-label">Display name</label><input id="settingsName" class="form-control mb-3" data-profile-name-input autocomplete="name"><label for="settingsEmail" class="form-label">Email</label><input id="settingsEmail" class="form-control mb-3" data-profile-email-input type="email" autocomplete="email"><button id="saveProfile" class="btn btn-primary" type="button">Save settings</button></section>
       </div>
     </div>
   </main>

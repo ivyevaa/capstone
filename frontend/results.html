@@ -8,28 +8,41 @@
   <link href="assets/css/styles.css" rel="stylesheet">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg sticky-top" aria-label="Results navigation"><div class="container"><a class="navbar-brand" href="index.html"><span class="brand-mark">T</span>TraitTracker</a><div class="ms-auto d-flex gap-2"><a class="btn btn-outline-primary" href="candidate-dashboard.html">Dashboard</a><a class="btn btn-primary" href="assessment.html">Retake</a></div></div></nav>
+  <a class="skip-link btn btn-primary" href="#main">Skip to content</a>
+  <nav class="navbar navbar-expand-lg sticky-top" aria-label="Results navigation"><div class="container"><a class="navbar-brand" href="index.html"><img class="brand-logo" src="assets/images/traittracker-logo-hd.png" alt="">TraitTracker</a><div class="ms-auto d-flex gap-2"><a class="btn btn-outline-primary" href="candidate-dashboard.html">Dashboard</a><a class="btn btn-primary" href="assessment.html">Retake</a></div></div></nav>
   <main class="app-shell" id="main">
     <div class="container">
       <section class="glass-card dashboard-hero p-4 mb-4">
         <div class="row align-items-center g-3">
           <div class="col-lg-8"><p class="eyebrow">Personality report</p><h1>Dominant trait: <span data-dominant-trait>Openness</span></h1><p id="resultNarrative" class="lead text-muted mb-0"></p></div>
-          <div class="col-lg-4 d-flex gap-2 justify-content-lg-end"><button class="btn btn-outline-primary" data-report-action type="button"><i class="bi bi-download me-2"></i>Download report</button><button id="shareResults" class="btn btn-primary" type="button"><i class="bi bi-share me-2"></i>Share</button></div>
+          <div class="col-lg-4 result-actions"><button id="downloadReport" class="btn btn-outline-primary" type="button"><i class="bi bi-file-earmark-pdf me-2" aria-hidden="true"></i>Download PDF</button><button id="shareResults" class="btn btn-primary" type="button"><i class="bi bi-share me-2" aria-hidden="true"></i>Share</button></div>
         </div>
       </section>
+      <section class="report-summary-strip mb-4" aria-label="Assessment quality summary">
+        <div><span>Completed</span><strong id="assessmentCompletion">20 of 20</strong></div>
+        <div><span>Response consistency</span><strong id="responseConsistency">Not available</strong></div>
+        <div><span>Dominant score gap</span><strong id="dominantGap">0 points</strong></div>
+        <div><span>Assessment date</span><strong id="assessmentDate">Current session</strong></div>
+      </section>
+      <p class="report-method-note mb-4"><i class="bi bi-info-circle" aria-hidden="true"></i><span><strong>Interpretation method:</strong> each trait is scored independently from 0 to 100, and the highest score is presented as the dominant trait. Response consistency describes similarity among related answers; it is not diagnostic confidence.</span></p>
       <div class="row g-3 mb-4" id="resultTraitCards"></div>
       <div class="dashboard-grid">
-        <section class="span-6 tt-card"><h2 class="h4">Radar visualization</h2><canvas id="resultRadar" aria-label="Radar chart of Big Five results"></canvas></section>
-        <section class="span-6 tt-card"><h2 class="h4">Trait comparison</h2><canvas id="comparisonChart" aria-label="Bar chart comparing trait results"></canvas></section>
+        <section class="span-6 tt-card"><h2 class="h4">Big Five profile shape</h2><p id="radarDescription" class="text-muted small">The radar shows how your five independent trait scores form your overall profile.</p><div class="chart-shell"><canvas id="resultRadar" role="img" aria-describedby="radarDescription chartTextSummary"></canvas></div></section>
+        <section class="span-6 tt-card"><h2 class="h4">Score overview</h2><p id="barDescription" class="text-muted small">Compare the size and interpretation range of each trait score.</p><div class="chart-shell"><canvas id="comparisonChart" role="img" aria-describedby="barDescription chartTextSummary"></canvas></div></section>
+        <section class="span-7 tt-card"><h2 class="h4">Your scores and the scale midpoint</h2><p id="midpointDescription" class="text-muted small">The 50-point line is the middle of this assessment scale, not a population average.</p><div class="chart-shell chart-shell-wide"><canvas id="midpointChart" role="img" aria-describedby="midpointDescription chartTextSummary"></canvas></div></section>
+        <section class="span-5 tt-card"><h2 class="h4">How to read the scores</h2><div class="score-range-list"><div><span class="range-swatch range-low"></span><strong>Low: 0-39</strong><p>Less characteristic in your current responses.</p></div><div><span class="range-swatch range-moderate"></span><strong>Moderate: 40-69</strong><p>Context-dependent or balanced expression.</p></div><div><span class="range-swatch range-high"></span><strong>High: 70-100</strong><p>More characteristic in your current responses.</p></div></div></section>
+        <section class="span-12 tt-card"><div class="d-flex flex-wrap justify-content-between align-items-start gap-2"><div><h2 class="h4">Assessment history</h2><p id="historyDescription" class="text-muted small mb-0">See how scores from completed assessments change over time.</p></div><span class="badge text-bg-light">Last 6 assessments</span></div><div class="chart-shell chart-shell-history"><canvas id="resultHistoryChart" role="img" aria-describedby="historyDescription historyEmpty"></canvas><p id="historyEmpty" class="empty-chart-message d-none">Complete another assessment to begin a meaningful trend comparison.</p></div></section>
+        <section class="span-12 tt-card"><h2 class="h4">Accessible score summary</h2><p id="chartTextSummary" class="text-muted">A text alternative for all visual score information.</p><div class="table-responsive"><table class="table align-middle mb-0"><caption class="visually-hidden">Big Five scores and interpretations</caption><thead><tr><th scope="col">Trait</th><th scope="col">Score</th><th scope="col">Range</th><th scope="col">Relative position</th></tr></thead><tbody id="scoreSummaryBody"></tbody></table></div></section>
         <section class="span-4 tt-card"><h2 class="h4">Strengths</h2><ul id="strengthList" class="mb-0"></ul></section>
         <section class="span-4 tt-card"><h2 class="h4">Growth areas</h2><ul id="growthList" class="mb-0"></ul></section>
         <section class="span-4 tt-card"><h2 class="h4">Career recommendations</h2><ul id="careerList" class="mb-0"></ul></section>
-        <section class="span-12 tt-card"><h2 class="h4">Personality insights</h2><p id="insightText" class="mb-0"></p></section>
+        <section class="span-12 tt-card"><h2 class="h4">Detailed trait interpretations</h2><div id="traitInterpretations" class="trait-interpretation-grid"></div></section>
+        <section class="span-12 tt-card"><h2 class="h4">Personality insight</h2><p id="insightText"></p><div class="privacy-note small mb-0"><strong>Use responsibly:</strong> TraitTracker describes patterns in your survey responses. It is not a clinical diagnosis, a measure of ability, or a complete predictor of career success. Career suggestions are reflection prompts, not decisions.</div></section>
       </div>
     </div>
   </main>
   <div class="modal fade" id="sessionTimeoutModal" tabindex="-1" aria-labelledby="sessionTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 id="sessionTitle" class="modal-title h5">Session timeout warning</h2></div><div class="modal-body"><p>Your result workspace has been idle. Extend your session to continue securely.</p></div><div class="modal-footer"><button class="btn btn-primary" data-extend-session type="button">Extend session</button></div></div></div></div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><script src="assets/vendor/jspdf.umd.min.js"></script>
   <script src="assets/js/app.js"></script><script src="assets/js/dashboard.js"></script><script src="assets/js/results.js"></script>
 </body>
 </html>

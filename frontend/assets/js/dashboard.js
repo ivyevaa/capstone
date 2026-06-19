@@ -2,12 +2,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const user = TraitTracker.getStoredUser();
   const scores = user.scores || TraitTracker.baselineScores;
   const dominant = TraitTracker.applyTheme(scores);
+  const history = TraitTracker.getAssessmentHistory();
+  const reportHistory = history.length ? history : [{ date: user.lastAssessment || new Date().toISOString(), scores }];
 
   TraitTracker.qsa("[data-profile-name]").forEach((node) => {
     node.textContent = user.name || "TraitTracker Candidate";
   });
   TraitTracker.qsa("[data-profile-email]").forEach((node) => {
     node.textContent = user.email || "candidate@traittracker.edu";
+  });
+  TraitTracker.qsa("[data-profile-name-input]").forEach((node) => {
+    node.value = user.name || "";
+  });
+  TraitTracker.qsa("[data-profile-email-input]").forEach((node) => {
+    node.value = user.email || "";
   });
 
   const scoreHost = TraitTracker.qs("#traitSummaryCards");
@@ -28,7 +36,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   TraitTracker.buildRadar(TraitTracker.qs("#dashboardRadar"), scores);
   TraitTracker.buildBar(TraitTracker.qs("#dashboardBars"), scores, "Latest assessment");
-  TraitTracker.buildLine(TraitTracker.qs("#historyTrend"));
+  TraitTracker.buildHistory(TraitTracker.qs("#historyTrend"), reportHistory);
+  TraitTracker.qs("#dominantScoreRing")?.style.setProperty("--score", scores[dominant]);
+  TraitTracker.qs("#reportCount").textContent = `${reportHistory.length} ready`;
+  TraitTracker.qs("#dashboardHistoryRows").innerHTML = reportHistory.slice(-3).reverse().map((item) => {
+    const itemDominant = TraitTracker.dominantTrait(item.scores);
+    return `<tr><td>${new Date(item.date).toLocaleDateString()}</td><td>${TraitTracker.traitLabels[itemDominant]}</td><td><span class="badge text-bg-success">Complete</span></td></tr>`;
+  }).join("");
 
   const insight = {
     openness: "Your workspace is tuned for exploration, idea generation, and creative comparison.",
@@ -43,11 +57,22 @@ document.addEventListener("DOMContentLoaded", () => {
   TraitTracker.qs("#saveProfile")?.addEventListener("click", () => {
     const name = TraitTracker.sanitize(TraitTracker.qs("#settingsName").value || user.name);
     const email = TraitTracker.sanitize(TraitTracker.qs("#settingsEmail").value || user.email);
+    const alert = TraitTracker.qs("#profileAlert");
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      alert.textContent = "Enter a display name and a valid email address.";
+      alert.className = "alert alert-danger";
+      return;
+    }
     TraitTracker.saveUser({ name, email });
+    TraitTracker.qsa("[data-profile-name]").forEach((node) => node.textContent = name);
+    alert.textContent = "Your profile settings have been saved.";
+    alert.className = "alert alert-success";
     TraitTracker.showToast("Profile settings saved.", "success");
   });
 
   TraitTracker.qsa("[data-report-action]").forEach((button) => {
-    button.addEventListener("click", () => TraitTracker.showToast("Report generation interface is ready for backend PDF export.", "info"));
+    button.addEventListener("click", () => {
+      window.location.href = "results.html?download=1";
+    });
   });
 });

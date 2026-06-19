@@ -48,6 +48,31 @@ const TraitTracker = (() => {
     return user;
   }
 
+  function isAuthenticated() {
+    return localStorage.getItem("ttAuthenticated") === "true" || sessionStorage.getItem("ttAuthenticated") === "true";
+  }
+
+  function setAuthenticated(authenticated, persistent = false) {
+    localStorage.removeItem("ttAuthenticated");
+    sessionStorage.removeItem("ttAuthenticated");
+    if (!authenticated) return;
+    (persistent ? localStorage : sessionStorage).setItem("ttAuthenticated", "true");
+  }
+
+  function scoreBand(score) {
+    if (score >= 70) return "High";
+    if (score >= 40) return "Moderate";
+    return "Low";
+  }
+
+  function getAssessmentHistory() {
+    try {
+      return JSON.parse(localStorage.getItem("ttAssessmentHistory") || "[]");
+    } catch {
+      return [];
+    }
+  }
+
   function dominantTrait(scores = baselineScores) {
     return traits.reduce((winner, trait) => scores[trait] > scores[winner] ? trait : winner, traits[0]);
   }
@@ -62,13 +87,41 @@ const TraitTracker = (() => {
   }
 
   function renderNav() {
-    const role = getStoredUser().role || "Candidate";
+    const user = getStoredUser();
+    const role = user.role || "Candidate";
+    const authenticated = isAuthenticated();
     qsa("[data-role-visible]").forEach((node) => {
       const allowed = node.dataset.roleVisible.split(",").map((item) => item.trim());
       node.classList.toggle("d-none", !allowed.includes(role));
     });
     qsa("[data-user-name]").forEach((node) => {
-      node.textContent = getStoredUser().name || getStoredUser().email;
+      node.textContent = user.name || user.email;
+    });
+    qsa("a[href='login.html'], a[href='register.html']").forEach((link) => link.classList.toggle("d-none", authenticated));
+    const navContainer = qs(".navbar .container");
+    if (!authenticated || !navContainer || qs(".nav-account", navContainer)) return;
+    const account = document.createElement("div");
+    account.className = "dropdown nav-account";
+    account.innerHTML = `
+      <button class="btn nav-account-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Open account menu for ${sanitize(user.name || user.email)}">
+        <span class="nav-account-avatar" aria-hidden="true">${sanitize((user.name || user.email || "U").charAt(0).toUpperCase())}</span>
+        <span class="nav-account-name">${sanitize(user.name || user.email)}</span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="candidate-dashboard.html#profile-settings"><i class="bi bi-person-gear me-2" aria-hidden="true"></i>Profile settings</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><button class="dropdown-item" type="button" data-logout><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Log out</button></li>
+      </ul>`;
+    navContainer.appendChild(account);
+    qs("[data-logout]", account)?.addEventListener("click", async () => {
+      try {
+        await fetch("/api/auth/logout", { method: "POST", headers: { "Content-Type": "application/json" } });
+      } catch {}
+      setAuthenticated(false);
+      localStorage.removeItem("ttUser");
+      localStorage.removeItem("ttConsent");
+      sessionStorage.removeItem("ttUser");
+      window.location.href = "login.html";
     });
   }
 
@@ -119,8 +172,8 @@ const TraitTracker = (() => {
       clearTimeout(logoutTimer);
       warningTimer = setTimeout(() => modal.show(), 12 * 60 * 1000);
       logoutTimer = setTimeout(() => {
-        saveUser({ role: "Candidate" });
-        showToast("Session expired. Please sign in again.", "warning");
+        setAuthenticated(false);
+        window.location.href = "login.html?expired=1";
       }, 15 * 60 * 1000);
     };
     ["click", "keydown", "mousemove", "touchstart"].forEach((eventName) => window.addEventListener(eventName, reset, { passive: true }));
@@ -186,7 +239,25 @@ const TraitTracker = (() => {
   }
 
   function hasConsent() {
-    return localStorage.getItem("ttConsent") === "accepted";
+    const user = getStoredUser();
+    const subject = isAuthenticated() ? String(user.id || user.email) : "guest";
+    try {
+      const record = JSON.parse(localStorage.getItem("ttConsent") || "null");
+      return record?.accepted === true && record.version === "2026-06-20" && record.subject === subject;
+    } catch {
+      return false;
+    }
+  }
+
+  function recordConsent() {
+    const user = getStoredUser();
+    const subject = isAuthenticated() ? String(user.id || user.email) : "guest";
+    localStorage.setItem("ttConsent", JSON.stringify({
+      accepted: true,
+      subject,
+      version: "2026-06-20",
+      acceptedAt: new Date().toISOString()
+    }));
   }
 
   function initConsentRequiredLinks() {
@@ -232,6 +303,7 @@ const TraitTracker = (() => {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: { r: { beginAtZero: true, max: 100, ticks: { stepSize: 20 }, grid: { color: colors.grid } } }
       }
@@ -249,6 +321,7 @@ const TraitTracker = (() => {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: { y: { beginAtZero: true, max: 100, grid: { color: colors.grid } }, x: { grid: { display: false } } }
       }
@@ -269,8 +342,56 @@ const TraitTracker = (() => {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: { legend: { position: "bottom" } },
         scales: { y: { beginAtZero: true, max: 100, grid: { color: colors.grid } } }
+      }
+    });
+  }
+
+  function buildComparison(canvas, scores = baselineScores) {
+    if (!canvas || !window.Chart) return null;
+    const colors = chartColors();
+    return new Chart(canvas, {
+      type: "bar",
+      data: {
+        labels: traits.map((trait) => traitLabels[trait]),
+        datasets: [
+          { label: "Your score", data: traits.map((trait) => scores[trait]), backgroundColor: colors.primary, borderRadius: 6 },
+          { label: "Scale midpoint", data: traits.map(() => 50), backgroundColor: "#cbd5e1", borderRadius: 6 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: "bottom" } },
+        scales: { y: { beginAtZero: true, max: 100, grid: { color: colors.grid } }, x: { grid: { display: false } } }
+      }
+    });
+  }
+
+  function buildHistory(canvas, history = getAssessmentHistory()) {
+    if (!canvas || !window.Chart) return null;
+    const colors = ["#7c3aed", "#2563eb", "#ea580c", "#16a34a", "#64748b"];
+    const points = history.slice(-6);
+    return new Chart(canvas, {
+      type: "line",
+      data: {
+        labels: points.map((item) => new Date(item.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })),
+        datasets: traits.map((trait, index) => ({
+          label: traitLabels[trait],
+          data: points.map((item) => item.scores[trait]),
+          borderColor: colors[index],
+          backgroundColor: colors[index],
+          pointRadius: 4,
+          tension: 0.28
+        }))
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: "bottom" } },
+        scales: { y: { beginAtZero: true, max: 100 }, x: { grid: { display: false } } }
       }
     });
   }
@@ -299,13 +420,20 @@ const TraitTracker = (() => {
     qsa,
     getStoredUser,
     saveUser,
+    isAuthenticated,
+    setAuthenticated,
+    scoreBand,
+    getAssessmentHistory,
     dominantTrait,
     applyTheme,
     hasConsent,
+    recordConsent,
     showToast,
     validateForm,
     buildRadar,
     buildBar,
-    buildLine
+    buildLine,
+    buildComparison,
+    buildHistory
   };
 })();

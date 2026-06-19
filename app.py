@@ -107,9 +107,7 @@ def frontend_assets(filename):
 def frontend_pages(page_name):
     return send_from_directory(FRONTEND_DIR, f"{page_name}.html")
 
-# ============================================================
-# UPDATED: PREMIUM, MINIMALIST APPLE-STYLE VISUALIZATION
-# ============================================================
+
 @app.route('/view-dashboard/<user_id>', methods=['GET'])
 def view_dashboard_graph(user_id):
     prediction = database.get_latest_prediction(user_id)
@@ -119,7 +117,6 @@ def view_dashboard_graph(user_id):
     career_html = prediction['career_guidance'].replace('\n\n', '<br><br>')
     personal_html = prediction['personal_development'].replace('\n\n', '<br><br>')
 
-    # Premium Minimalist HTML/CSS Template
     html_template = """
     <!DOCTYPE html>
     <html lang="en">

@@ -9,14 +9,15 @@
 </head>
 <body>
   <a class="skip-link btn btn-primary" href="#main">Skip to content</a>
-  <nav class="navbar navbar-expand-lg sticky-top" aria-label="Primary navigation"><div class="container"><a class="navbar-brand" href="index.html"><span class="brand-mark">T</span>TraitTracker</a><a class="btn btn-outline-primary ms-auto" href="login.html">Login</a></div></nav>
+  <nav class="navbar navbar-expand-lg sticky-top" aria-label="Primary navigation"><div class="container"><a class="navbar-brand" href="index.html"><img class="brand-logo" src="assets/images/traittracker-logo-hd.png" alt="">TraitTracker</a><a class="btn btn-outline-primary ms-auto" href="login.html">Login</a></div></nav>
   <main id="main" class="auth-shell">
     <div class="container">
       <div class="glass-card auth-panel">
         <div class="row g-0">
-          <div class="col-lg-5 auth-aside"><p class="eyebrow text-white-50">Create profile</p><h1 class="display-6 fw-bold">Start with consent, continue with insight</h1><p>Create a secure profile so your results and reports are available when you return.</p><div class="privacy-note bg-white bg-opacity-25 text-white border-white">Privacy notice: assessment data is used to generate your trait profile and report.</div></div>
+          <div class="col-lg-5 auth-aside"><p class="eyebrow text-white-50">Create profile</p><h1 class="display-6 fw-bold">Start with consent, continue with insight</h1><p>Create a secure profile so your results and reports are available when you return.</p><div class="privacy-note auth-privacy-note">Privacy notice: assessment data is used to generate your trait profile and report.</div></div>
           <div class="col-lg-7 p-4 p-md-5 bg-white">
             <h2 class="h3">Register</h2>
+            <div id="registerAlert" class="alert alert-danger d-none" role="alert" aria-live="assertive"></div>
             <form id="registerForm" class="needs-validation" novalidate>
               <div class="row g-3">
                 <div class="col-md-6"><label for="fullName" class="form-label">Full name</label><input id="fullName" class="form-control" required autocomplete="name"><div class="invalid-feedback">Name is required.</div></div>
@@ -29,7 +30,7 @@
                 <div class="col-md-6"><label for="confirmPassword" class="form-label">Confirm password</label><input id="confirmPassword" class="form-control" type="password" minlength="8" required autocomplete="new-password"></div>
               </div>
               <div class="form-check mt-4"><input id="privacyAck" class="form-check-input" type="checkbox" required><label class="form-check-label" for="privacyAck">I understand that consent is required before taking the assessment.</label><div class="invalid-feedback">Acknowledgement is required.</div></div>
-              <button class="btn btn-primary w-100 mt-4" type="submit">Create account</button>
+              <button class="btn btn-primary w-100 mt-4" type="submit"><span class="button-label">Create account</span><span class="spinner-border spinner-border-sm ms-2 d-none" aria-hidden="true"></span></button>
             </form>
           </div>
         </div>
