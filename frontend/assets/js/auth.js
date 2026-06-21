@@ -29,24 +29,29 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
     clearFormError("#loginAlert");
     if (!TraitTracker.validateForm(loginForm)) return;
-    const email = TraitTracker.sanitize(TraitTracker.qs("#loginEmail").value.trim().toLowerCase());
+    const identifier = TraitTracker.sanitize(TraitTracker.qs("#loginIdentifier").value.trim().toLowerCase());
     const password = TraitTracker.qs("#loginPassword").value;
     setSubmitting(loginForm, true);
     try {
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ identifier, password })
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.message || "Unable to sign in.");
       const role = payload.user.role || "Candidate";
       const existing = TraitTracker.getStoredUser();
-      TraitTracker.saveUser({ ...payload.user, name: existing.email === email ? existing.name : email.split("@")[0] });
+      const accountEmail = payload.user.email || identifier;
+      const displayName = payload.user.name || (existing.email === accountEmail ? existing.name : identifier.split("@")[0]);
+      TraitTracker.saveUser({ ...payload.user, email: accountEmail, name: displayName });
       TraitTracker.setAuthenticated(true, TraitTracker.qs("#rememberMe").checked);
-      TraitTracker.showToast("Login successful. Redirecting to your dashboard.", "success");
+      localStorage.removeItem("ttConsent");
+      TraitTracker.showToast("Login successful. Security consent is required before assessment.", "success");
       setTimeout(() => {
-        window.location.href = role === "Admin" ? "admin-dashboard.html" : role === "Company" ? "company-dashboard.html" : "candidate-dashboard.html";
+        const requestedPage = sessionStorage.getItem("ttPostLoginRedirect");
+        sessionStorage.removeItem("ttPostLoginRedirect");
+        window.location.href = requestedPage || (role === "Admin" ? "admin-dashboard.html" : role === "Company" ? "company-dashboard.html" : "candidate-dashboard.html");
       }, 500);
     } catch (error) {
       showFormError("#loginAlert", error.message === "Failed to fetch" ? "The server could not be reached. Please try again." : error.message);
@@ -86,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!loginResponse.ok) throw new Error("Account created. Please sign in to continue.");
       TraitTracker.saveUser({ ...loginPayload.user, name });
       TraitTracker.setAuthenticated(true, false);
+      localStorage.removeItem("ttConsent");
       TraitTracker.showToast("Account created. Review consent before starting.", "success");
       setTimeout(() => window.location.href = "consent.html", 550);
     } catch (error) {
@@ -103,5 +109,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (new URLSearchParams(window.location.search).get("expired") === "1") {
     showFormError("#loginAlert", "Your session expired to protect your private results. Please sign in again.");
+  }
+  if (new URLSearchParams(window.location.search).get("required") === "1") {
+    showFormError("#loginAlert", "Log in first. You will then be asked to accept the privacy and security agreement.");
   }
 });

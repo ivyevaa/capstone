@@ -22,20 +22,15 @@ class User(db.Model):
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
-    """Register a new Admin, Company, or Candidate user."""
+    """Register a new candidate user."""
 
     data = request.get_json(silent=True) or {}
     email = data.get("email", "").strip().lower()
     password = data.get("password", "")
-    role = data.get("role", "Candidate").strip()
-
-    allowed_roles = {"Admin", "Company", "Candidate"}
+    role = "Candidate"
 
     if not email or not password:
         return jsonify({"status": "error", "message": "Email and password are required."}), 400
-
-    if role not in allowed_roles:
-        return jsonify({"status": "error", "message": "Role must be Admin, Company, or Candidate."}), 400
 
     if len(password) < 8:
         return jsonify({"status": "error", "message": "Password must be at least 8 characters."}), 400
@@ -66,13 +61,31 @@ def login():
     """Verify user credentials and start a login session."""
 
     data = request.get_json(silent=True) or {}
-    email = data.get("email", "").strip().lower()
+    identifier = data.get("identifier", data.get("email", "")).strip().lower()
     password = data.get("password", "")
 
-    if not email or not password:
-        return jsonify({"status": "error", "message": "Email and password are required."}), 400
+    if not identifier or not password:
+        return jsonify({"status": "error", "message": "Username and password are required."}), 400
 
-    user = User.query.filter_by(email=email).first()
+    if identifier == "test" and password == "test123":
+        session.clear()
+        session["user_id"] = "demo-test"
+        session["email"] = "test@traittracker.local"
+        session["username"] = "test"
+        session["role"] = "Candidate"
+        return jsonify({
+            "status": "success",
+            "message": "Demonstration login successful.",
+            "user": {
+                "id": "demo-test",
+                "username": "test",
+                "name": "Test Candidate",
+                "email": "test@traittracker.local",
+                "role": "Candidate",
+            },
+        }), 200
+
+    user = User.query.filter_by(email=identifier).first()
     if not user or not bcrypt.check_password_hash(user.password, password):
         return jsonify({"status": "error", "message": "Invalid email or password."}), 401
 
@@ -88,6 +101,25 @@ def login():
             "id": user.id,
             "email": user.email,
             "role": user.role,
+        },
+    }), 200
+
+
+@auth_bp.route("/session", methods=["GET"])
+def session_status():
+    """Return the active session without exposing private credentials."""
+
+    if "user_id" not in session:
+        return jsonify({"status": "error", "authenticated": False}), 401
+
+    return jsonify({
+        "status": "success",
+        "authenticated": True,
+        "user": {
+            "id": session["user_id"],
+            "email": session.get("email", ""),
+            "username": session.get("username", ""),
+            "role": session.get("role", "Candidate"),
         },
     }), 200
 

@@ -36,6 +36,15 @@ def init_db():
             calculated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS consent_records (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            policy_version TEXT NOT NULL,
+            accepted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
     
     conn.commit()
     conn.close()
@@ -61,6 +70,17 @@ def save_prediction_results(user_id, o, c, e, a, n, career_txt, personal_txt):
            (user_id, openness, conscientiousness, extraversion, agreeableness, neuroticism, career_guidance, personal_development) 
            VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
         (user_id, o, c, e, a, n, career_txt, personal_txt)
+    )
+    conn.commit()
+    conn.close()
+
+def save_consent_record(user_id, policy_version):
+    """Stores an auditable consent acceptance for the current user."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO consent_records (user_id, policy_version) VALUES (?, ?)",
+        (str(user_id), policy_version)
     )
     conn.commit()
     conn.close()

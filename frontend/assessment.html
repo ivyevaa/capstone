@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Assessment | TraitTracker</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -19,46 +20,28 @@
           <div class="tt-card position-sticky" style="top: 6rem;">
             <p class="eyebrow">Big Five Survey</p>
             <h1 class="h3">Personality Assessment</h1>
-            <p class="text-muted">Answer honestly using the 1-5 scale. Your current progress is saved in this browser.</p>
-            <div class="d-flex justify-content-between small fw-semibold"><span id="stepCounter">Step 1 of 4</span><span id="completionPercent">0%</span></div>
-            <div class="progress mt-2" role="progressbar" aria-label="Survey completion" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><div id="surveyProgress" class="progress-bar" style="width:0"></div></div>
+            <p class="text-muted">Answer all 15 statements honestly using the agreement scale. Five negatively worded items are reverse-scored automatically.</p>
+            <div class="d-flex justify-content-between small fw-semibold"><span id="stepCounter">Step 1 of 3</span><span id="completionPercent">0%</span></div>
+            <div id="surveyProgressTrack" class="progress mt-2" role="progressbar" aria-label="Survey completion" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><div id="surveyProgress" class="progress-bar" style="width:0"></div></div>
             <p id="autoSaveStatus" class="small text-muted mt-3 mb-0" aria-live="polite"><i class="bi bi-cloud" aria-hidden="true"></i> Waiting for first answer</p>
-            <div class="privacy-note mt-4 small">Consent is checked before this page can continue. Avoid entering personally sensitive information in open text fields.</div>
+            <div class="privacy-note mt-4 small"><i class="bi bi-shield-check me-1" aria-hidden="true"></i> Login and server-verified privacy consent are required before answers can be submitted.</div>
           </div>
         </aside>
         <section class="col-lg-8">
           <form id="surveyForm" class="glass-card p-4" novalidate>
-            <div class="survey-step active">
-              <h2 class="h4">Thinking and planning</h2>
-              <div class="question-block mb-4"><p class="fw-semibold">1. I enjoy exploring new ideas and unfamiliar topics.</p><div class="likert-grid" role="radiogroup" aria-label="Question 1"><input id="q1a" name="q1" value="5" type="radio"><label for="q1a">5</label><input id="q1b" name="q1" value="4" type="radio"><label for="q1b">4</label><input id="q1c" name="q1" value="3" type="radio"><label for="q1c">3</label><input id="q1d" name="q1" value="2" type="radio"><label for="q1d">2</label><input id="q1e" name="q1" value="1" type="radio"><label for="q1e">1</label></div></div>
-              <div class="question-block mb-4"><p class="fw-semibold">2. I keep tasks organized and finish what I start.</p><div class="likert-grid" role="radiogroup" aria-label="Question 2"><input id="q2a" name="q2" value="5" type="radio"><label for="q2a">5</label><input id="q2b" name="q2" value="4" type="radio"><label for="q2b">4</label><input id="q2c" name="q2" value="3" type="radio"><label for="q2c">3</label><input id="q2d" name="q2" value="2" type="radio"><label for="q2d">2</label><input id="q2e" name="q2" value="1" type="radio"><label for="q2e">1</label></div></div>
-              <div class="question-block mb-4"><p class="fw-semibold">3. I feel energized when interacting with groups.</p><div class="likert-grid" role="radiogroup" aria-label="Question 3"><input id="q3a" name="q3" value="5" type="radio"><label for="q3a">5</label><input id="q3b" name="q3" value="4" type="radio"><label for="q3b">4</label><input id="q3c" name="q3" value="3" type="radio"><label for="q3c">3</label><input id="q3d" name="q3" value="2" type="radio"><label for="q3d">2</label><input id="q3e" name="q3" value="1" type="radio"><label for="q3e">1</label></div></div>
-              <div class="question-block mb-4"><p class="fw-semibold">4. I try to understand other people's feelings.</p><div class="likert-grid" role="radiogroup" aria-label="Question 4"><input id="q4a" name="q4" value="5" type="radio"><label for="q4a">5</label><input id="q4b" name="q4" value="4" type="radio"><label for="q4b">4</label><input id="q4c" name="q4" value="3" type="radio"><label for="q4c">3</label><input id="q4d" name="q4" value="2" type="radio"><label for="q4d">2</label><input id="q4e" name="q4" value="1" type="radio"><label for="q4e">1</label></div></div>
-              <div class="question-block mb-4"><p class="fw-semibold">5. I often feel worried when plans are uncertain.</p><div class="likert-grid" role="radiogroup" aria-label="Question 5"><input id="q5a" name="q5" value="5" type="radio"><label for="q5a">5</label><input id="q5b" name="q5" value="4" type="radio"><label for="q5b">4</label><input id="q5c" name="q5" value="3" type="radio"><label for="q5c">3</label><input id="q5d" name="q5" value="2" type="radio"><label for="q5d">2</label><input id="q5e" name="q5" value="1" type="radio"><label for="q5e">1</label></div></div>
-            </div>
-            <div class="survey-step">
-              <h2 class="h4">Work and collaboration</h2>
-              <div id="step2Questions"></div>
-            </div>
-            <div class="survey-step">
-              <h2 class="h4">Energy and stress</h2>
-              <div id="step3Questions"></div>
-            </div>
-            <div class="survey-step">
-              <h2 class="h4">Reflection and consistency</h2>
-              <div id="step4Questions"></div>
-            </div>
+            <div class="survey-step active"><h2 class="h4">Ideas and daily habits</h2><div id="step1Questions"></div></div>
+            <div class="survey-step"><h2 class="h4">Work and social energy</h2><div id="step2Questions"></div></div>
+            <div class="survey-step"><h2 class="h4">Relationships and emotional patterns</h2><div id="step3Questions"></div></div>
             <div class="d-flex justify-content-between border-top pt-4">
-              <button id="prevStep" class="btn btn-outline-secondary" type="button"><i class="bi bi-arrow-left me-2"></i>Previous</button>
-              <button id="nextStep" class="btn btn-primary" type="button">Next<i class="bi bi-arrow-right ms-2"></i></button>
-              <button id="submitSurvey" class="btn btn-primary d-none" type="submit"><i class="bi bi-check2-circle me-2"></i>Submit assessment</button>
+              <button id="prevStep" class="btn btn-outline-secondary" type="button"><i class="bi bi-arrow-left me-2" aria-hidden="true"></i>Previous</button>
+              <button id="nextStep" class="btn btn-primary" type="button">Next<i class="bi bi-arrow-right ms-2" aria-hidden="true"></i></button>
+              <button id="submitSurvey" class="btn btn-primary d-none" type="submit"><span class="button-label"><i class="bi bi-check2-circle me-2" aria-hidden="true"></i>Submit assessment</span><span class="spinner-border spinner-border-sm ms-2 d-none" aria-hidden="true"></span></button>
             </div>
           </form>
         </section>
       </div>
     </div>
   </main>
-  <div class="modal fade" id="consentGate" tabindex="-1" aria-labelledby="consentGateTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content glass-card"><div class="modal-header"><h2 id="consentGateTitle" class="modal-title h5">Consent required</h2></div><div class="modal-body"><p>You must review and accept the privacy consent screen before taking the assessment.</p></div><div class="modal-footer"><a class="btn btn-primary" href="consent.html">Review consent</a></div></div></div></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="assets/js/app.js"></script><script src="assets/js/survey.js"></script>
 </body>

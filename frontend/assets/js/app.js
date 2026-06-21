@@ -243,7 +243,7 @@ const TraitTracker = (() => {
     const subject = isAuthenticated() ? String(user.id || user.email) : "guest";
     try {
       const record = JSON.parse(localStorage.getItem("ttConsent") || "null");
-      return record?.accepted === true && record.version === "2026-06-20" && record.subject === subject;
+      return record?.accepted === true && record.version === "2026-06-21" && record.subject === subject;
     } catch {
       return false;
     }
@@ -255,7 +255,7 @@ const TraitTracker = (() => {
     localStorage.setItem("ttConsent", JSON.stringify({
       accepted: true,
       subject,
-      version: "2026-06-20",
+      version: "2026-06-21",
       acceptedAt: new Date().toISOString()
     }));
   }
@@ -263,6 +263,15 @@ const TraitTracker = (() => {
   function initConsentRequiredLinks() {
     qsa("a[href='assessment.html']").forEach((link) => {
       link.addEventListener("click", (event) => {
+        if (!isAuthenticated()) {
+          event.preventDefault();
+          sessionStorage.setItem("ttPostLoginRedirect", "consent.html");
+          showToast("Please log in before beginning the assessment.", "warning");
+          setTimeout(() => {
+            window.location.href = "login.html?required=1";
+          }, 650);
+          return;
+        }
         if (hasConsent()) return;
         event.preventDefault();
         sessionStorage.setItem("ttConsentRedirect", "assessment.html");
@@ -303,7 +312,6 @@ const TraitTracker = (() => {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: { r: { beginAtZero: true, max: 100, ticks: { stepSize: 20 }, grid: { color: colors.grid } } }
       }
@@ -321,7 +329,6 @@ const TraitTracker = (() => {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: { y: { beginAtZero: true, max: 100, grid: { color: colors.grid } }, x: { grid: { display: false } } }
       }
@@ -342,7 +349,6 @@ const TraitTracker = (() => {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
         plugins: { legend: { position: "bottom" } },
         scales: { y: { beginAtZero: true, max: 100, grid: { color: colors.grid } } }
       }

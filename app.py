@@ -1,7 +1,7 @@
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify, render_template_string, send_from_directory
+from flask import Flask, request, jsonify, render_template_string, send_from_directory, session
 from flask_cors import CORS
 from auth import auth_bp, bcrypt, db
 import database
@@ -21,16 +21,41 @@ db.init_app(app)
 bcrypt.init_app(app)
 app.register_blueprint(auth_bp)
 
+CONSENT_VERSION = "2026-06-21"
+
 with app.app_context():
     db.create_all()
 
+@app.route('/api/consent', methods=['POST'])
+def record_consent():
+    if 'user_id' not in session:
+        return jsonify({"status": "error", "message": "Login is required before consent."}), 401
+
+    data = request.get_json(silent=True) or {}
+    if data.get('accepted') is not True:
+        return jsonify({"status": "error", "message": "Explicit consent is required."}), 400
+
+    database.save_consent_record(session['user_id'], CONSENT_VERSION)
+    session['consent_version'] = CONSENT_VERSION
+    return jsonify({
+        "status": "success",
+        "message": "Privacy and security consent recorded.",
+        "consent_version": CONSENT_VERSION,
+    }), 200
+
 @app.route('/api/submit-survey', methods=['POST'])
 def submit_survey():
-    data = request.get_json()
-    if not data or 'user_id' not in data or 'answers' not in data:
-        return jsonify({"status": "error", "message": "Missing user_id or survey answers data structures."}), 400
-    
-    user_id = data['user_id']
+    if 'user_id' not in session:
+        return jsonify({"status": "error", "message": "Login is required before assessment submission."}), 401
+
+    if session.get('consent_version') != CONSENT_VERSION:
+        return jsonify({"status": "error", "message": "Current privacy and security consent is required."}), 403
+
+    data = request.get_json(silent=True) or {}
+    if 'answers' not in data:
+        return jsonify({"status": "error", "message": "Survey answers are required."}), 400
+
+    user_id = session['user_id']
     answers = data['answers']
     
     try:
@@ -61,8 +86,21 @@ def submit_survey():
         }
     }), 200
 
+@app.route('/api/assessment-access', methods=['GET'])
+def assessment_access():
+    if 'user_id' not in session:
+        return jsonify({"status": "error", "message": "Login is required."}), 401
+    if session.get('consent_version') != CONSENT_VERSION:
+        return jsonify({"status": "error", "message": "Privacy and security consent is required."}), 403
+    return jsonify({"status": "success", "access": True}), 200
+
 @app.route('/api/dashboard/<user_id>', methods=['GET'])
 def get_dashboard(user_id):
+    if 'user_id' not in session:
+        return jsonify({"status": "error", "message": "Login is required."}), 401
+    if str(session['user_id']) != str(user_id) and session.get('role') != 'Admin':
+        return jsonify({"status": "error", "message": "You cannot view another user's results."}), 403
+
     prediction = database.get_latest_prediction(user_id)
     if not prediction:
         return jsonify({"status": "error", "message": "No personality records found for this user identifier."}), 404
@@ -83,6 +121,9 @@ def get_dashboard(user_id):
 
 @app.route('/api/admin/analytics', methods=['GET'])
 def get_admin_analytics():
+    if session.get('role') != 'Admin':
+        return jsonify({"status": "error", "message": "Admin access is required."}), 403
+
     stats = database.get_platform_averages()
     all_users = database.get_all_user_results()
     
@@ -281,4 +322,4 @@ def view_dashboard_graph(user_id):
     )
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=os.environ.get("FLASK_DEBUG", "0") == "1", port=5000)

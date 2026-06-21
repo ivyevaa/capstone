@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const report = dynamicReport[dominant];
   TraitTracker.qs("#resultNarrative").textContent = report.narrative;
-  TraitTracker.qs("#assessmentCompletion").textContent = `${user.reportMeta?.answered || 20} of ${user.reportMeta?.total || 20}`;
+  TraitTracker.qs("#assessmentCompletion").textContent = `${user.reportMeta?.answered || 15} of ${user.reportMeta?.total || 15}`;
   TraitTracker.qs("#responseConsistency").textContent = user.reportMeta?.responseConsistency == null ? "Not available" : `${user.reportMeta.responseConsistency}%`;
   TraitTracker.qs("#dominantGap").textContent = `${dominantGap} point${dominantGap === 1 ? "" : "s"}`;
   TraitTracker.qs("#assessmentDate").textContent = user.lastAssessment ? new Date(user.lastAssessment).toLocaleDateString() : "Current session";

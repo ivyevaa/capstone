@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const scoreHost = TraitTracker.qs("#traitSummaryCards");
   if (scoreHost) {
     scoreHost.innerHTML = TraitTracker.traits.map((trait) => `
-      <div class="span-3">
+      <div>
         <article class="tt-card ${trait === dominant ? "dominant-card" : ""}">
           <div class="trait-score">
             <span class="trait-icon"><i class="bi ${TraitTracker.icons[trait]}"></i></span>
@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   TraitTracker.buildRadar(TraitTracker.qs("#dashboardRadar"), scores);
   TraitTracker.buildBar(TraitTracker.qs("#dashboardBars"), scores, "Latest assessment");
+  TraitTracker.buildComparison(TraitTracker.qs("#dashboardComparison"), scores);
   TraitTracker.buildHistory(TraitTracker.qs("#historyTrend"), reportHistory);
   TraitTracker.qs("#dominantScoreRing")?.style.setProperty("--score", scores[dominant]);
   TraitTracker.qs("#reportCount").textContent = `${reportHistory.length} ready`;

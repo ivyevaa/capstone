@@ -19,12 +19,8 @@ def load_ml_model():
 def predict_personality_traits(answers):
     """
     Validates, preprocesses, and processes 15 survey answers.
-    Maps the 15 items evenly across the Big Five dimensions (3 questions per trait):
-    - Extraversion (E): Questions 0, 5, 10
-    - Neuroticism (N): Questions 1, 6, 11
-    - Agreeableness (A): Questions 2, 7, 12
-    - Conscientiousness (C): Questions 3, 8, 13
-    - Openness (O): Questions 4, 9, 14
+    Maps the grouped questionnaire items across the Big Five dimensions.
+    Questions 2, 5, 8, 11, and 14 are reverse scored.
     """
     # 1. Server-Side Strict Validation
     if not isinstance(answers, list) or len(answers) != 15:
@@ -50,11 +46,11 @@ def predict_personality_traits(answers):
     # 3. Robust Psychometric Fallback 
     # Directly converts user selections to academic Big Five continuous scale indices (0.0 to 1.0)
     # Handles reverse-scored logic mapping natively for scientific accuracy
-    e_raw = (answers[0] + (6 - answers[5]) + answers[10]) / 15.0
-    n_raw = (answers[1] + (6 - answers[6]) + answers[11]) / 15.0
-    a_raw = ((6 - answers[2]) + answers[7] + answers[12]) / 15.0
-    c_raw = (answers[3] + answers[8] + (6 - answers[13])) / 15.0
-    o_raw = (answers[4] + answers[9] + answers[14]) / 15.0
+    o_raw = (answers[0] + (6 - answers[1]) + answers[2]) / 15.0
+    c_raw = (answers[3] + (6 - answers[4]) + answers[5]) / 15.0
+    e_raw = (answers[6] + (6 - answers[7]) + answers[8]) / 15.0
+    a_raw = (answers[9] + (6 - answers[10]) + answers[11]) / 15.0
+    n_raw = (answers[12] + (6 - answers[13]) + answers[14]) / 15.0
 
     # Ensure clean float outputs rounded neatly for the frontend charts
     return round(o_raw, 2), round(c_raw, 2), round(e_raw, 2), round(a_raw, 2), round(n_raw, 2)
