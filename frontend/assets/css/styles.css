@@ -1461,6 +1461,15 @@ a:hover {
   margin-bottom: 0;
 }
 
+.home-section-copy {
+  max-width: 48rem;
+}
+
+.home-section-copy .text-muted {
+  line-height: 1.6;
+  margin-top: 0.9rem;
+}
+
 .home-feature-card {
   align-items: flex-start;
   display: flex;
